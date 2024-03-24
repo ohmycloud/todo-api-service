@@ -2,9 +2,7 @@ pub async fn create_router(
     // the database pool is passed into the router, which takes ownership
     dbpool: sqlx::Pool<sqlx::Sqlite>,
 ) -> axum::Router {
-    use crate::api::{
-        ping, todo_create, todo_delete, todo_list, todo_read, todo_update,
-    };
+    use crate::api::{ping, todo_create, todo_delete, todo_list, todo_read, todo_update};
     use axum::{routing::get, Router};
     use tower_http::cors::{Any, CorsLayer};
     use tower_http::trace::TraceLayer;
@@ -26,15 +24,13 @@ pub async fn create_router(
                 // map to todo_read(), todo_update(), and todo_delete, respectively.
                 .route(
                     "/todos/:id",
-                    get(todo_read).put(todo_update)
-                        .delete(todo_delete),
+                    get(todo_read).put(todo_update).delete(todo_delete),
                 ),
         )
         // We hand the database connection pool off to the router to be passed into handlers as state
         .with_state(dbpool)
         // A CORS layer is added to demonstrate how to apply CORS headers
-        .layer(CorsLayer::new().allow_methods(Any)
-            .allow_origin(Any))
+        .layer(CorsLayer::new().allow_methods(Any).allow_origin(Any))
         // We need to add the HTTP tracing layer from tower_http to get request traces.
         .layer(TraceLayer::new_for_http())
 }

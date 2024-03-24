@@ -1,7 +1,7 @@
+use crate::error::Error;
 use chrono::NaiveDateTime;
 use serde::{Deserialize, Serialize};
 use sqlx::{query, query_as, SqlitePool};
-use crate::error::Error;
 
 #[derive(Deserialize)]
 pub struct CreateTodo {
@@ -74,7 +74,11 @@ impl Todo {
     }
 
     // We've added another new type here, UpdateTodo, which contains the two fields we allow to be updated.
-    pub async fn update(dbpool: SqlitePool, id: i64, updated_todo: UpdateTodo) -> Result<Todo, Error> {
+    pub async fn update(
+        dbpool: SqlitePool,
+        id: i64,
+        updated_todo: UpdateTodo,
+    ) -> Result<Todo, Error> {
         // We're using the returning * SQL clause to retrieve the updated record immediately. Notice how we set the updated_at
         // field to the current date and time.
         query_as("update todos set body = ?, completed = ?, updated_at = datetime('now') where id = ? returning *")

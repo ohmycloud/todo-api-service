@@ -1,12 +1,12 @@
+use crate::error::Error;
+use crate::todo::{CreateTodo, Todo, UpdateTodo};
 use axum::extract::{Path, State};
 use axum::Json;
 use sqlx::SqlitePool;
-use crate::error::Error;
-use crate::todo::{CreateTodo, Todo, UpdateTodo};
 
 pub async fn ping(
     // The State extractor gives us the database connection pool from the axum state.
-    State (dbpool): State<SqlitePool>,
+    State(dbpool): State<SqlitePool>,
 ) -> Result<String, Error> {
     use sqlx::Connection;
 
@@ -19,15 +19,14 @@ pub async fn ping(
         .await
         // Upon success, ping() returns unit, so we just map it to the string ok, which is returned as our response.
         .map(|_| "ok".to_string())
-        // We use the From trait to map sqlx::Error to our error types.
+        // We use the `From` trait to map sqlx::Error to our error types.
         .map_err(Into::into)
 }
 
-pub async fn todo_list(
-    State(dbpool): State<SqlitePool>,
-) -> Result<Json<Vec<Todo>>, Error> { // Note how we're returning a JSON object of Vec<Todo> or, possibly, an error.
-    // The Todo::list() method returns a plain Vec<Todo>, so we map that to a Json object using Json::from,
-    // which relies on the Serialize trait we derived for Todo
+pub async fn todo_list(State(dbpool): State<SqlitePool>) -> Result<Json<Vec<Todo>>, Error> {
+    // Note how we're returning a JSON object of `Vec<Todo>` or, possibly, an error.
+    // The `Todo::list()` method returns a plain `Vec<Todo>`, so we map that to a Json object using Json::from,
+    // which relies on the Serialize trait we derived for `Todo`
     Todo::list(dbpool).await.map(Json::from)
 }
 

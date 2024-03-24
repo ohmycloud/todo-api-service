@@ -6,7 +6,7 @@ pub enum Error {
     // We'll convert errors from sqlx::Error into an HTTP status code and message.
     Sqlx(StatusCode, String),
     // Error::NotFound is what we'll use to conveniently map response to HTTP 404s.
-    NotFound
+    NotFound,
 }
 
 impl From<sqlx::Error> for Error {
